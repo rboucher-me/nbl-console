@@ -1,0 +1,86 @@
+{% extends 'base/layout.html' %}
+{% load form_helpers %}
+
+{% block title %}Configuration{% endblock %}
+
+{% block tabs %}
+  <ul class="nav nav-tabs px-3">
+    <li class="nav-item" role="presentation">
+      <a href="#configform" role="tab" data-bs-toggle="tab" class="nav-link active">Configuration Form</a>
+    </li>
+  </ul>
+{% endblock %}
+
+{% block content-wrapper %}
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="configform">
+      <form action="" method="post">
+        {% csrf_token %}
+
+        <div class="field-group my-5">
+          <div class="row mb-2">
+            <h5 class="offset-sm-3">Login & Authentication</h5>
+          </div>
+          {% render_field form.REMOTE_AUTH_BACKEND %}
+          <div class="row mb-2">
+            <div class="offset-sm-3">
+              <ul class="nav nav-pills" role="tablist">
+                <li role="presentation" class="nav-item">
+                  <button role="tab" type="button" id="azure_ad_tab" data-bs-toggle="tab" aria-controls="azure_ad" data-bs-target="#azure_ad" class="nav-link {% if 'azuread' in form.initial.REMOTE_AUTH_BACKEND %}active{% endif %}">
+                    Azure AD
+                  </button>
+                </li>
+                <li role="presentation" class="nav-item">
+                  <button role="tab" type="button" id="okta_tab" data-bs-toggle="tab" aria-controls="okta" data-bs-target="#okta" class="nav-link {% if 'okta_openidconnect' in form.initial.REMOTE_AUTH_BACKEND %}active{% endif %}">
+                    Okta
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="tab-content p-0 border-0">
+            <div class="tab-pane {% if 'azuread' in form.initial.REMOTE_AUTH_BACKEND %}active{% endif %}" id="azure_ad" role="tabpanel" aria-labeled-by="azure_ad_tab">
+              {% render_field form.SOCIAL_AUTH_AZUREAD_OAUTH2_KEY %}
+              {% render_field form.SOCIAL_AUTH_AZUREAD_OAUTH2_SECRET %}
+            </div>
+            <div class="tab-pane {% if 'okta_openidconnect' in form.initial.REMOTE_AUTH_BACKEND %}active{% endif %}" id="okta" role="tabpanel" aria-labeled-by="okta_tab">
+              {% render_field form.SOCIAL_AUTH_OKTA_OPENIDCONNECT_KEY %}
+              {% render_field form.SOCIAL_AUTH_OKTA_OPENIDCONNECT_SECRET %}
+              {% render_field form.SOCIAL_AUTH_OKTA_OPENIDCONNECT_API_URL %}
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group my-5">
+          <div class="row mb-2">
+            <h5 class="offset-sm-3">User Sessions</h5>
+          </div>
+          {% render_field form.LOGIN_TIMEOUT %}
+          {% render_field form.LOGIN_PERSISTENCE %}
+        </div>
+
+        <div class="field-group my-5">
+          <div class="row mb-2">
+            <h5 class="offset-sm-3">Plugins</h5>
+          </div>
+          {% render_field form.PLUGINS %}
+          {% render_field form.PLUGINS_CONFIG %}
+        </div>
+
+        <div class="field-group my-5">
+          <div class="row mb-2">
+            <h5 class="offset-sm-3">Time & Date</h5>
+          </div>
+          {% render_field form.DATE_FORMAT %}
+          {% render_field form.SHORT_DATE_FORMAT %}
+          {% render_field form.TIME_FORMAT %}
+          {% render_field form.SHORT_TIME_FORMAT %}
+        </div>
+
+        <div class="text-end">
+          <input type="submit" value="Save & Restart" class="btn btn-primary" />
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock content-wrapper %}

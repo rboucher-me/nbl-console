@@ -1,0 +1,13 @@
+{% extends 'generic/confirmation_form.html' %}
+{% load form_helpers %}
+
+{% block title %}Confirm File Deletion{% endblock %}
+
+{% block message %}
+  <p>Are you sure you want to <strong class="text-danger">delete</strong> the following files?</p>
+  <ul>
+    {% for name in form.cleaned_data.files %}
+      <li>{{ name }}</li>
+    {% endfor %}
+  </ul>
+{% endblock message %}

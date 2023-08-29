@@ -1,0 +1,88 @@
+{% extends 'base/layout.html' %}
+{% load helpers %}
+
+{% block title %}Custom Scripts Management{% endblock %}
+
+{% block tabs %}
+  <ul class="nav nav-tabs px-3">
+    <li class="nav-item" role="presentation">
+      <a href="#scripts" role="tab" data-bs-toggle="tab" class="nav-link active">Custom Scripts</a>
+    </li>
+  </ul>
+{% endblock %}
+
+{% block content-wrapper %}
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="scripts">
+      <form action="{% url 'plugins:cloud:scripts_delete' %}" method="POST" class="mb-5">
+        {% csrf_token %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Module</th>
+              <th>Modified</th>
+              <th>Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for module, attrs in scripts.items %}
+              <tr>
+                <td class="min-width">
+                  <input type="checkbox" name="files" value="{{ module }}" class="form-check-input" />
+                </td>
+                <td>{{ module }}</td>
+                <td>{{ attrs.mtime|date }} {{ attrs.mtime|time }}</td>
+                <td>{{ attrs.size }} bytes</td>
+              </tr>
+              {% for name, class in attrs.scripts.items %}
+                <tr>
+                  <td></td>
+                  <td>
+                    <a href="{% url 'extras:script' module=attrs.module name=name %}">{{ name }}</a>
+                  </td>
+                  <td colspan="2" class="text-muted">
+                    {{ class.Meta.description|placeholder }}
+                  </td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td></td>
+                  <td colspan="3">
+                    <span class="ps-3 text-muted"><i class="mdi mdi-alert-circle-outline"></i> No scripts found</span>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-danger btn-sm">
+          <i class="mdi mdi-trash-can-outline" aria-hidden="true"></i> Delete Selected
+        </button>
+      </form>
+
+      <div class="row">
+        <div class="col col-6 offset-md-3">
+          <div class="card">
+            <h5 class="card-header">Upload Script Module</h5>
+            <div class="card-body">
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <table class="table">
+                  {{ form.as_table }}
+                </table>
+                <div class="text-end">
+                  <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="mdi mdi-upload" aria-hidden="true"></i> Upload
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock content-wrapper %}
